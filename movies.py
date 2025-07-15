@@ -11,14 +11,16 @@ class Movie:
             raise ValueError("Rating must be between 1 and 10")
 
     def __str__(self):
-        return f"{self.title}: {self.rating}"
+        return f"{self.title} ({self.genre}): {self.rating}"
 
 def get_movies():
     movies = []
-    user_input = input("Enter a movie title (or 'Done' to finish): ")
-    while user_input != "Done":
-        movies.append(Movie(user_input))
-        user_input = input("Enter a movie title (or 'Done' to finish): ")
+    while True:
+        title = input("Enter a movie title (or 'Done' to finish): ")
+        if title == "Done":
+            break
+        genre = input(f"Enter a genre for '{title}': ")
+        movies.append(Movie(title, genre))
     return movies
 
 def ranking():
@@ -26,32 +28,53 @@ def ranking():
     for movie in movies:
         while True:
             try:
-                user_rank = int(input(f"Rank the movie '{movie.title}' (1-10): "))
-                movie.set_rating(user_rank)
+                rating = int(input(f"Rate the movie '{movie.title}' (1-10): "))
+                movie.set_rating(rating)
                 break
             except ValueError:
                 print("Invalid rating. Please enter a number between 1 and 10.")
+    return movies
 
-    print("\nMovie Rankings:")
-    for movie in movies:
-        print(movie)
+def get_average_rating(rated_movies):
+    return sum(m.rating for m in rated_movies) / len(rated_movies)
 
-    # to check if there is a movie note rated
-    rated_movies = [m for m in movies if m.rating is not None]
+def get_highest_rating(rated_movies):
+    return max(rated_movies, key=lambda m: m.rating)
 
-    avg = sum(m.rating for m in rated_movies) / len(rated_movies)
-    highest = max(rated_movies, key=lambda m: m.rating)
-    lowest = min(rated_movies, key=lambda m: m.rating)
+def get_lowest_rating(rated_movies):
+    return min(rated_movies, key=lambda m: m.rating)
 
+def statistic(rated_movies):
     # ANSI colors
     RED = '\033[91m'
     GREEN = '\033[92m'
     ORANGE = '\033[93m'
     RESET = '\033[0m'
 
+    avg = get_average_rating(rated_movies)
+    highest = get_highest_rating(rated_movies)
+    lowest = get_lowest_rating(rated_movies)
+
     print("\nStatistics:")
     print(f"{ORANGE}Average rating: {avg:.2f}{RESET}")
     print(f"{GREEN}Highest rated movie: {highest.title} ({highest.rating}){RESET}")
     print(f"{RED}Lowest rated movie: {lowest.title} ({lowest.rating}){RESET}")
 
-ranking()
+def recommendation_by_genre(rated_movies, genre):
+    filtered = [m for m in rated_movies if m.genre.lower() == genre.lower()]
+    if not filtered:
+        print(f"No movies found in genre '{genre}'.")
+        return None
+    best = max(filtered, key=lambda m: m.rating)
+    print(f"\nRecommended movie in genre '{genre}': {best.title} ({best.rating})")
+    return None
+
+# Main
+rated_movies = ranking()
+rated_movies = [m for m in rated_movies if m.rating is not None]
+
+statistic(rated_movies)
+
+# Optional: Ask for a genre recommendation
+genre_input = input("\nEnter a genre for recommendation: ")
+recommendation_by_genre(rated_movies, genre_input)
