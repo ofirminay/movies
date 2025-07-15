@@ -13,6 +13,13 @@ class Movie:
     def __str__(self):
         return f"{self.title} ({self.genre}): {self.rating}"
 
+class User():
+    def __init__(self, user_name, movies=None, fav_genres=None):
+        self.user_name = user_name
+        self.movies = [] if movies is None else movies
+        self.fav_genres = [] if fav_genres is None else fav_genres
+
+
 def get_movies():
     movies = []
     while True:
