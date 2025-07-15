@@ -19,6 +19,12 @@ class User():
         self.movies = [] if movies is None else movies
         self.fav_genres = [] if fav_genres is None else fav_genres
 
+    def add_movie(self, movie):
+        self.movies.append(movie)
+
+    def add_fav_genre(self, genre):
+        self.fav_genres.append(genre)
+
 
 def get_movies():
     movies = []
@@ -76,12 +82,17 @@ def recommendation_by_genre(rated_movies, genre):
     print(f"\nRecommended movie in genre '{genre}': {best.title} ({best.rating})")
     return None
 
-# Main
-rated_movies = ranking()
-rated_movies = [m for m in rated_movies if m.rating is not None]
+def main():
+    # Main
+    rated_movies = ranking()
+    rated_movies = [m for m in rated_movies if m.rating is not None]
 
-statistic(rated_movies)
+    statistic(rated_movies)
 
-# Optional: Ask for a genre recommendation
-genre_input = input("\nEnter a genre for recommendation: ")
-recommendation_by_genre(rated_movies, genre_input)
+    # Optional: Ask for a genre recommendation
+    genre_input = input("\nEnter a genre for recommendation: ")
+    recommendation_by_genre(rated_movies, genre_input)
+
+if __name__ == "__main__":
+    main()
+
